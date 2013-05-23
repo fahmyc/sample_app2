@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
-  before_filter :signed_in_user, only: [:index, :edit, :update, :destroy]
-  before_filter :correct_user, only: [:edit, :update]
-  before_filter :admin_user,     only: :destroy
+  before_filter :signed_in_user,    only: [:index, :edit, :update, :destroy]
+  before_filter :correct_user,      only: [:edit, :update]
+  before_filter :admin_user,        only: :destroy
 
   def new
   	@user = User.new
@@ -9,6 +9,7 @@ class UsersController < ApplicationController
 
   def show
   	@user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
 
   def create
@@ -46,12 +47,6 @@ class UsersController < ApplicationController
   end
 
   private
-    def signed_in_user
-      unless signed_in?
-        store_location
-        redirect_to signin_url, notice: "Please sign in."
-      end
-    end
 
     def correct_user
       @user = User.find(params[:id])
